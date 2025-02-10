@@ -89,11 +89,11 @@ private fun computePercent(actual30mFrame: List<TickerData>): PercentChangeData 
     // Вычисляем изменения для объема
     val volumeChanges = VolumePercentChange(
         m1 = getDataNMinutesAgo(1)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
-        m3 = getDataNMinutesAgo(3)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
+     //   m3 = getDataNMinutesAgo(3)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
         m5 = getDataNMinutesAgo(5)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
         m10 = getDataNMinutesAgo(10)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
-        m15 = getDataNMinutesAgo(15)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
-        m20 = getDataNMinutesAgo(20)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
+    //    m15 = getDataNMinutesAgo(15)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
+    //    m20 = getDataNMinutesAgo(20)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0,
         m30 = getDataNMinutesAgo(30)?.let { calculateChange(currentVolume, it.usdtVolume.toDouble()) } ?: 0.0
     )
 

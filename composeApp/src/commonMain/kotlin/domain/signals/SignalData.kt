@@ -42,10 +42,10 @@ class PricePercentChange(
 
 class VolumePercentChange(
     val m1: Double,
-    val m3: Double,
+  //  val m3: Double,
     val m5: Double,
     val m10: Double,
-    val m15: Double,
-    val m20: Double,
+  //  val m15: Double,
+  //  val m20: Double,
     val m30: Double
 )
