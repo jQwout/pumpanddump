@@ -10,6 +10,13 @@ suspend fun tickers(): MarketDataResponse {
     return response.body<MarketDataResponse>()
 }
 
+// имперически вычислил , что holdingAmount=0 идет  для тех монет , которым еще предстоит листинг на фьючах, или их сняли с листинга
+//.filter { it.holdingAmount != "0" }
+fun MarketDataResponse.fetchActiveFutures(): List<TickerData> {
+    return data.filter {
+        it.holdingAmount > 0
+    }
+}
 // модели
 
 // Корневой объект JSON

@@ -42,6 +42,10 @@ class SignalListPresenter(
         }
     }
 
+    private fun onNewSettings() {
+        signals = emptyList()
+    }
+
     private fun loadSettings() {
         coroutineScope.launch {
             settings = signalSettingsRepository.load()
@@ -50,17 +54,13 @@ class SignalListPresenter(
 
     private fun observeSignals() {
         coroutineScope.launch {
-            signalService.provide(period = 30_000)
+            signalService.provide(period = 10_000)
                 .map(::filterByUnique)
                 .map(::filterBySettings)
                 .collect { newSignals ->
                     signals += newSignals
                 }
         }
-    }
-
-    private fun onNewSettings() {
-        signals = emptyList()
     }
 
     private fun filterBySettings(newSignals: List<SignalData>): List<SignalData> {

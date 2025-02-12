@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import domain.signals.Signal
 import domain.signals.SignalData
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import java.time.format.DateTimeFormatter
@@ -94,7 +95,7 @@ fun SignalMessageCard(signal: SignalData) {
         ) {
             // Название тикера и место на бирже
             Text(
-                text = "${signal.tickerName} (${signal.placeOnStock})",
+                text = "${signal.tickerName} (${signal.placeOnStock})${if (signal.signal == Signal.BUMP) "⬆️" else "⬇️"}\"",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primary
@@ -130,18 +131,18 @@ fun SignalMessageCard(signal: SignalData) {
                 text = "📦 Volume: ${"%,.2f".format(signal.volume)} USDT",
                 fontSize = 14.sp,
                 color = MaterialTheme.colors.primary
-                )
+            )
 
             // Изменение объема
             Text(
-                text = "🔄 Volume Change: 1m: ${"%.2f".format(signal.volumeChange.m1)}%, 3m: ${"%.2f".format(signal.volumeChange.m3)}%, 5m: ${
+                text = "🔄 Volume Change: 1m: ${"%.2f".format(signal.volumeChange.m1)}%,  5m: ${
                     "%.2f".format(
                         signal.volumeChange.m5
                     )
                 }%",
                 fontSize = 14.sp,
                 color = MaterialTheme.colors.primary
-                )
+            )
 
             // Фандинг рейт
             Text(
@@ -190,7 +191,7 @@ fun SignalData.toMessage(): String {
     }% | 24h: ${"%.2f".format(priceChange24h)}%                 
             | 📦 Volume: ${"%,.2f".format(volume)} USDT
             | 🔄 Volume Change:
-            |    1m: ${"%.2f".format(volumeChange.m1)}% | 3m: ${"%.2f".format(volumeChange.m3)}% | 5m: ${
+            |    1m: ${"%.2f".format(volumeChange.m1)}% | 5m: ${
         "%.2f".format(
             volumeChange.m5
         )

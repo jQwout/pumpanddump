@@ -1,6 +1,5 @@
 package domain.tickers
 
-import shared.BoundedQueue
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,9 +13,10 @@ import kotlinx.serialization.Serializable
  *      }
  *  }
  */
-typealias TickersMap = HashMap<String, TickersFrame>
-typealias TickersFrame = HashMap<Int, BoundedQueue<TickerData>>
+typealias TickersByMinuteMap = HashMap<String, TickersByMinute>
+typealias TickersByMinute = LinkedHashMap<Int, TickerData>
 
+// данные от биржи апи
 @Serializable
 data class TickerData(
     val symbol: String,
@@ -29,6 +29,26 @@ data class TickerData(
     val indexPrice: String,
     val fundingRate: Double,
     val open24h: String,
-    val markPrice: Double
+    val markPrice: Double,
+    val holdingAmount: Double
 )
 
+// данные от внутреннего хранилища
+
+class TickersLast30Minute(
+    val ts: Long,
+    val map : TickersByMinuteMap
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TickersLast30Minute
+
+        return ts == other.ts
+    }
+
+    override fun hashCode(): Int {
+        return ts.hashCode()
+    }
+}
