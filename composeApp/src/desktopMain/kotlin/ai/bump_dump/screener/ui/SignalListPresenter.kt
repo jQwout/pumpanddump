@@ -68,7 +68,7 @@ class SignalListPresenter(
             newSignals.filter { signal ->
                 val priceInRange = signal.price.toFloat() in settings.priceRange
                 val volumeInRange = signal.volume.toFloat() in settings.volumeRange
-                val ratingInRange = signal.placeOnStock in settings.minRating..settings.maxRating
+                val ratingInRange = signal.placeOnStock.toFloat() in settings.ratingRange
 
                 priceInRange && volumeInRange && ratingInRange
             }

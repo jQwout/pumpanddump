@@ -1,8 +1,9 @@
 package ai.bump_dump.shared
 
-import ai.bump_dump.MainPresenter
 import ai.bump_dump.screener.ui.SignalListPresenter
 import ai.bump_dump.settings.domain.SignalSettingsRepository
+import ai.bump_dump.settings.ui.SignalListSettingsPresenter
+import ai.bump_dump.window.WindowPresenter
 import domain.signals.SignalService
 import domain.tickers.TickersService
 import domain.tickers.TickersStorage
@@ -33,7 +34,11 @@ object ServiceLocator {
         SignalListPresenter(signalService, signalSettingsRepository, scope)
     }
 
+    val settingsPresenter: SignalListSettingsPresenter by lazy {
+        SignalListSettingsPresenter(signalSettingsRepository, scope)
+    }
+
     val mainPresenter by lazy {
-        MainPresenter(scope, signalSettingsRepository)
+        WindowPresenter(scope, signalSettingsRepository)
     }
 }

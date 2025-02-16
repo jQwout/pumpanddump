@@ -36,7 +36,8 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.kotlinx.serialization.json)
-            implementation("org.jetbrains.compose.ui:ui-tooling-preview-desktop:+")
+            implementation("org.jetbrains.compose.ui:ui-tooling-preview-desktop:1.7.3")
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
         }
     }
 }

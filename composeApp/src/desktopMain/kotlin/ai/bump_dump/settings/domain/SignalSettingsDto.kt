@@ -6,10 +6,9 @@ import kotlinx.serialization.Serializable
 data class SignalSettingsDto(
     val bumpSize: Float = 1f, // Размер бампа
     val dumpSize: Float = 1f, // Размер дампа
-    val volumeRange: ClosedFloatingPointRange<Float> = 0f..Int.MAX_VALUE.toFloat(), // Диапазон объема
+    val volumeRange: ClosedFloatingPointRange<Float> = 0f..Long.MAX_VALUE.toFloat(), // Диапазон объема
     val priceRange: ClosedFloatingPointRange<Float> = 0f..Int.MAX_VALUE.toFloat(), // Диапазон цены
-    val minRating: Int = 1, // Минимальный рейтинг
-    val maxRating: Int = Int.MAX_VALUE, // Максимальный рейтинг
+    val ratingRange: ClosedFloatingPointRange<Float> = 0f..1000f,
 
 
     val isDarkTheme: Boolean = false

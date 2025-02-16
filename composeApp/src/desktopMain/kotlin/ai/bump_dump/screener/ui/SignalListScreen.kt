@@ -1,6 +1,7 @@
 package ai.bump_dump.screener.ui
 
 import ai.bump_dump.settings.ui.SignalListSettingsScreen
+import ai.bump_dump.shared.Callback
 import ai.bump_dump.shared.openBrowser
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,12 +24,13 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun SignalListScreen(
-    signalListPresenter: SignalListPresenter
+    signalListPresenter: SignalListPresenter,
+    onSettingsClick: Callback
 ) {
     Surface() {
         Button(
             onClick = {
-                signalListPresenter.toggleDialog()
+                onSettingsClick()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -39,11 +41,6 @@ fun SignalListScreen(
         // Отображаем список сигналов
         SignalListView(signalListPresenter.signals)
         // настройки
-        if (signalListPresenter.showDialog) {
-            SignalListSettingsScreen({ signalListPresenter.toggleDialog() }) {
-                signalListPresenter.saveSettings(it)
-            }
-        }
     }
 }
 
@@ -95,7 +92,7 @@ fun SignalMessageCard(signal: SignalData) {
         ) {
             // Название тикера и место на бирже
             Text(
-                text = "${signal.tickerName} (${signal.placeOnStock})${if (signal.signal == Signal.BUMP) "⬆️" else "⬇️"}\"",
+                text = "${signal.tickerName} (${signal.placeOnStock})${if (signal.signal == Signal.BUMP) "⬆️" else "⬇️"}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primary
@@ -109,7 +106,7 @@ fun SignalMessageCard(signal: SignalData) {
                 else -> Color.Black // Белый, если цена не изменилась
             }
             Text(
-                text = "💰 Price: ${"%,.10f".format(signal.price)} (%${"%.2f".format(signal.priceChange24h)}) USDT",
+                text = "💰 Price: ${"%,.10f".format(signal.price)} (%${"%.2f".format(signal.priceChange24h * 100)}) USDT",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = priceColor
