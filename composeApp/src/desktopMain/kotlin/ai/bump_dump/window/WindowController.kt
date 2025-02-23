@@ -66,11 +66,7 @@ private fun Content(
     // Get the name of the current screen
     val currentScreen = backStackEntry?.destination?.route ?: MainRouter.List.name
 
-    Scaffold(
-        drawerContent = {
-            // todo добавить возможность добавление еще одного окна списка
-        }
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         NavHost(navController = navController, startDestination = currentScreen) {
             composable(route = MainRouter.List.name) {
                 SignalListScreen(signalListPresenter) {

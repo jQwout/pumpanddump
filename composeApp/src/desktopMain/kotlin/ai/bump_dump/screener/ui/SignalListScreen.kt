@@ -1,8 +1,8 @@
 package ai.bump_dump.screener.ui
 
-import ai.bump_dump.settings.ui.SignalListSettingsScreen
 import ai.bump_dump.shared.Callback
 import ai.bump_dump.shared.openBrowser
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,9 +10,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,19 +31,26 @@ fun SignalListScreen(
     onSettingsClick: Callback
 ) {
     Surface() {
-        Button(
-            onClick = {
-                onSettingsClick()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("НАСТРОЙКИ")
-        }
         // Отображаем список сигналов
         SignalListView(signalListPresenter.signals)
         // настройки
+        // Прозрачная закругленная кнопка поверх списка
+        // Прозрачная закругленная кнопка по центру
+        Button(
+            onClick = { onSettingsClick() },
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, Color.White, RoundedCornerShape(16.dp))
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically // Выравнивание контента в кнопке
+            ) {
+                Text("Settings")
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
+            }
+        }
     }
 }
 

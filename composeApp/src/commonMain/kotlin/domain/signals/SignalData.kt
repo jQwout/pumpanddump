@@ -30,7 +30,7 @@ class PercentChangeData(
     val volume: VolumePercentChange,
 )
 
-class PricePercentChange(
+data class PricePercentChange(
     val m1: Double,
     val m3: Double,
     val m5: Double,
@@ -40,7 +40,7 @@ class PricePercentChange(
     val m30: Double
 )
 
-class VolumePercentChange(
+data class VolumePercentChange(
     val m1: Double,
     val m5: Double,
     val m10: Double,

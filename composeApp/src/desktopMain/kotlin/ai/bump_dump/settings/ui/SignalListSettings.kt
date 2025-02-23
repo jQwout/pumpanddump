@@ -1,20 +1,24 @@
 package ai.bump_dump.settings.ui
 
-import ai.bump_dump.screener.ui.SignalListPresenter
+
 import ai.bump_dump.settings.domain.SignalSettingsDto
 import ai.bump_dump.shared.Callback
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -48,18 +52,18 @@ fun SettingsView(
     onSave: (SignalSettingsDto) -> Unit
 ) {
     var bumpSize by remember { mutableStateOf(settingsDto.bumpSize) }
-    var bumpSizeText by remember { mutableStateOf(bumpSize.toString()) }
-
     var dumpSize by remember { mutableStateOf(settingsDto.dumpSize) }
-    var dumpSizeText by remember { mutableStateOf(dumpSize.toString()) }
 
-    var volumeRange by remember { mutableStateOf(settingsDto.volumeRange) }
-    var minVolumeText by remember { mutableStateOf(volumeRange.start.toString()) }
-    var maxVolumeText by remember { mutableStateOf(volumeRange.endInclusive.toString()) }
+    var volumeMin by remember { mutableStateOf(settingsDto.volumeMin) }
+    var volumeMax by remember { mutableStateOf(settingsDto.volumeMax) }
 
-    var ratingRating by remember { mutableStateOf(settingsDto.ratingRange) }
+    var ratingMin by remember { mutableStateOf(settingsDto.ratingMin) }
+    var ratingMax by remember { mutableStateOf(settingsDto.ratingMax) }
 
     var isDarkTheme by remember { mutableStateOf(settingsDto.isDarkTheme) }
+    var dumpEnabled by remember { mutableStateOf(settingsDto.dumpEnabled) } // Состояние для dumpEnabled
+    var bumpEnabled by remember { mutableStateOf(settingsDto.bumpEnabled) } // Состояние для bumpEnabled
+    var rationEnabled by remember { mutableStateOf(settingsDto.rationEnabled) } // Состояние для rationEnabled
 
     Surface(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -68,52 +72,72 @@ fun SettingsView(
     ) {
         Column(
             modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SliderWithEditText(
-                label = "Bump Size",
+            // Bump Size
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Bump Size", style = MaterialTheme.typography.body1)
+                Checkbox(
+                    checked = bumpEnabled,
+                    onCheckedChange = { bumpEnabled = it }
+                )
+            }
+            FloatInputField(
                 value = bumpSize,
                 onValueChange = { bumpSize = it },
-                textValue = bumpSizeText,
-                onTextChange = { bumpSizeText = it },
-                valueRang = 0f..100f
+                minValue = 0f,
+                maxValue = 100f,
+                enabled = bumpEnabled // Передаем состояние bumpEnabled
             )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            SliderWithEditText(
-                label = "Dump Size",
+            // Dump Size
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Dump Size", style = MaterialTheme.typography.body1)
+                Checkbox(
+                    checked = dumpEnabled,
+                    onCheckedChange = { dumpEnabled = it }
+                )
+            }
+            FloatInputField(
                 value = dumpSize,
                 onValueChange = { dumpSize = it },
-                textValue = dumpSizeText,
-                onTextChange = { dumpSizeText = it },
-                valueRang = 0f..100f
+                minValue = 0f,
+                maxValue = 100f,
+                enabled = dumpEnabled // Передаем состояние dumpEnabled
             )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            RangeSliderWithEditText(
-                label = "Volume Range",
-                range = volumeRange,
-                onRangeChange = { volumeRange = it },
-                minTextValue = 1000f,
-                onMinTextChange = { minVolumeText = it },
-                maxTextValue = Long.MAX_VALUE.toFloat(),
-                onMaxTextChange = { maxVolumeText = it }
-            )
+            // Rating Range
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Rating Range", style = MaterialTheme.typography.body1)
+                Checkbox(
+                    checked = rationEnabled,
+                    onCheckedChange = { rationEnabled = it }
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                NumericInputField(
+                    value = ratingMin.toInt(),
+                    onValueChange = { ratingMin = it.toFloat() },
+                    minValue = 1,
+                    maxValue = ratingMax.toInt(),
+                    enabled = rationEnabled // Передаем состояние rationEnabled
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                NumericInputField(
+                    value = ratingMax.toInt(),
+                    onValueChange = { ratingMax = it.toFloat() },
+                    minValue = ratingMin.toInt(),
+                    maxValue = 1000,
+                    enabled = rationEnabled // Передаем состояние rationEnabled
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
 
-            RangeSliderWithEditText(
-                label = "Rating Range",
-                minTextValue = 1f,
-                maxTextValue = 500f,
-                onMinTextChange = { ratingRating = it.toFloat()..ratingRating.endInclusive },
-                onMaxTextChange = { ratingRating = ratingRating.start..it.toFloat() },
-                range = ratingRating,
-                onRangeChange = {
-                    ratingRating = it
-                }
-            )
-
+            // Dark Theme
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Dark Theme", style = MaterialTheme.typography.body1)
                 Switch(
@@ -122,6 +146,7 @@ fun SettingsView(
                 )
             }
 
+            // Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -135,9 +160,14 @@ fun SettingsView(
                     val settings = SignalSettingsDto(
                         bumpSize = bumpSize,
                         dumpSize = dumpSize,
-                        volumeRange = volumeRange,
-                        ratingRange = ratingRating,
-                        isDarkTheme = isDarkTheme
+                        volumeMin = volumeMin,
+                        volumeMax = volumeMax,
+                        ratingMin = ratingMin,
+                        ratingMax = ratingMax,
+                        isDarkTheme = isDarkTheme,
+                        dumpEnabled = dumpEnabled, // Сохраняем состояние dumpEnabled
+                        bumpEnabled = bumpEnabled, // Сохраняем состояние bumpEnabled
+                        rationEnabled = rationEnabled // Сохраняем состояние rationEnabled
                     )
                     onSave(settings)
                     onClose()
@@ -148,172 +178,118 @@ fun SettingsView(
         }
     }
 }
+@Composable
+fun NumericInputField(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    minValue: Int = 0,
+    maxValue: Int = 1000,
+    step: Int = 1,
+    enabled: Boolean = true // Добавлен параметр enabled
+) {
+    Row(
+        modifier = modifier
+            .border(1.dp, MaterialTheme.colors.surface, RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+            value = value.toString(),
+            onValueChange = { newValue ->
+                if (enabled) { // Проверка на enabled
+                    newValue.toIntOrNull()?.let { num ->
+                        if (num in minValue..maxValue) {
+                            onValueChange(num)
+                        }
+                    }
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            modifier = Modifier.width(100.dp),
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+            singleLine = true,
+            enabled = enabled // Передаем состояние enabled в OutlinedTextField
+        )
+        Column {
+            IconButton(
+                onClick = {
+                    if (enabled && value < maxValue) { // Проверка на enabled
+                        onValueChange(value + step)
+                    }
+                },
+                enabled = enabled // Передаем состояние enabled в IconButton
+            ) {
+                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase")
+            }
+            IconButton(
+                onClick = {
+                    if (enabled && value > minValue) { // Проверка на enabled
+                        onValueChange(value - step)
+                    }
+                },
+                enabled = enabled // Передаем состояние enabled в IconButton
+            ) {
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease")
+            }
+        }
+    }
+}
 
 @Composable
-fun SliderWithEditText(
-    label: String,
+fun FloatInputField(
     value: Float,
     onValueChange: (Float) -> Unit,
-    textValue: String,
-    onTextChange: (String) -> Unit,
-    valueRang: ClosedFloatingPointRange<Float> = 0f..100f,
+    modifier: Modifier = Modifier,
+    minValue: Float = 0f,
+    maxValue: Float = 1000f,
+    step: Float = 0.5f,
+    enabled: Boolean = true // Добавлен параметр enabled
 ) {
-    Column {
-        Text(text = label, style = MaterialTheme.typography.body1)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Slider(
-                value = value,
-                onValueChange = { newValue ->
-                    onValueChange(newValue)
-                    onTextChange(newValue.toString())
-                },
-                modifier = Modifier.weight(1f),
-                valueRange = valueRang
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            OutlinedTextField(
-                value = textValue,
-                onValueChange = { newText ->
-                    onTextChange(newText)
-                    newText.toFloatOrNull()?.let { onValueChange(it) }
-                },
-                maxLines = 1,
-                modifier = Modifier.width(80.dp),  // Уменьшенный размер
-                textStyle = TextStyle(fontSize = 14.sp)  // Уменьшенный размер текста
-            )
-        }
-    }
-}
-
-@Composable
-fun SliderWithEditTextAndSteps(
-    label: String,
-    value: Float,
-    valueRang: ClosedFloatingPointRange<Float>,
-    onValueChange: (Float) -> Unit,
-    textValue: String,
-    onTextChange: (String) -> Unit,
-    steps: Int
-) {
-    Column {
-        Text(text = label, style = MaterialTheme.typography.body1)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Slider(
-                value = value,
-                onValueChange = { newValue ->
-                    onValueChange(newValue)
-                    onTextChange(newValue.toString())
-                },
-                modifier = Modifier.weight(1f),
-                valueRange = valueRang,
-                steps = steps  // Добавляем отсечки
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            OutlinedTextField(
-                value = textValue,
-                onValueChange = { newText ->
-                    onTextChange(newText)
-                    newText.toFloatOrNull()?.let { onValueChange(it) }
-                },
-                maxLines = 1,
-                modifier = Modifier.width(80.dp),  // Уменьшенный размер
-                textStyle = TextStyle(fontSize = 14.sp)  // Уменьшенный размер текста
-            )
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun RangeSliderWithEditText(
-    label: String,
-    range: ClosedFloatingPointRange<Float>,
-    onRangeChange: (ClosedFloatingPointRange<Float>) -> Unit,
-    minTextValue: Float,
-    onMinTextChange: (String) -> Unit,
-    maxTextValue: Float,
-    onMaxTextChange: (String) -> Unit
-) {
-    Column {
-        Text(text = label, style = MaterialTheme.typography.body1)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(
-                value = range.start.toString(),
-                onValueChange = { newText : String ->
-                    onMinTextChange(newText)
-                    newText.toFloatOrNull()?.let { newMin ->
-                        onRangeChange(newMin..range.endInclusive)
+    Row(
+        modifier = modifier
+            .border(1.dp, MaterialTheme.colors.surface, RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+            value = value.toString(),
+            onValueChange = { newValue ->
+                if (enabled) { // Проверка на enabled
+                    newValue.toFloatOrNull()?.let { num ->
+                        if (num in minValue..maxValue) {
+                            onValueChange(num)
+                        }
+                    }
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            modifier = Modifier.width(100.dp),
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+            singleLine = true,
+            enabled = enabled // Передаем состояние enabled в OutlinedTextField
+        )
+        Column {
+            IconButton(
+                onClick = {
+                    if (enabled && value + step <= maxValue) { // Проверка на enabled
+                        onValueChange((value + step).coerceAtMost(maxValue))
                     }
                 },
-                maxLines = 1,
-                modifier = Modifier.width(80.dp),  // Уменьшенный размер
-                textStyle = TextStyle(fontSize = 14.sp)  // Уменьшенный размер текста
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            RangeSlider(
-                value = range,
-                onValueChange = { newRange ->
-                    onRangeChange(newRange)
-                    onMinTextChange(newRange.start.toString())
-                    onMaxTextChange(newRange.endInclusive.toString())
-                },
-                modifier = Modifier.weight(1f),
-                valueRange = minTextValue..maxTextValue
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            OutlinedTextField(
-                value = range.endInclusive.toString(),
-                onValueChange = { newText : String ->
-                    onMaxTextChange(newText)
-                    newText.toFloatOrNull()?.let { newMax ->
-                        onRangeChange(range.start..newMax)
+                enabled = enabled // Передаем состояние enabled в IconButton
+            ) {
+                Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase")
+            }
+            IconButton(
+                onClick = {
+                    if (enabled && value - step >= minValue) { // Проверка на enabled
+                        onValueChange((value - step).coerceAtLeast(minValue))
                     }
                 },
-                maxLines = 1,
-                modifier = Modifier.width(80.dp),  // Уменьшенный размер
-                textStyle = TextStyle(fontSize = 14.sp)  // Уменьшенный размер текста
-            )
-        }
-    }
-}
-
-@Composable
-fun RangeEditTextInt(
-    label: String,
-    minTextValue: String,
-    onMinTextChange: (String) -> Unit,
-    maxTextValue: String,
-    onMaxTextChange: (String) -> Unit,
-    minValueLimit: Int = 1,
-    maxValueLimit: Int = 500
-) {
-    Column {
-        Text(text = label, style = MaterialTheme.typography.body1)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(
-                value = minTextValue,
-                onValueChange = { newText ->
-                    if (minValueLimit <= newText.toInt()) {
-                        onMinTextChange(newText)
-                    }
-                },
-                maxLines = 1,
-                modifier = Modifier.width(80.dp),  // Уменьшенный размер
-                textStyle = TextStyle(fontSize = 14.sp)  // Уменьшенный размер текста
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            OutlinedTextField(
-                value = maxTextValue,
-                onValueChange = { newText ->
-                    if (maxValueLimit >= newText.toInt()) {
-                        onMaxTextChange(newText)
-                    }
-                },
-                maxLines = 1,
-                modifier = Modifier.width(80.dp),  // Уменьшенный размер
-                textStyle = TextStyle(fontSize = 14.sp)  // Уменьшенный размер текста
-            )
+                enabled = enabled // Передаем состояние enabled в IconButton
+            ) {
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease")
+            }
         }
     }
 }

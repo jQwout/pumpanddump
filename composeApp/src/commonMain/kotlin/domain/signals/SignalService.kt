@@ -49,19 +49,17 @@ interface SignalService {
 
 
         private fun isDuplicateSignal(newSignal: SignalData, existingSignals: SignalData): Boolean {
-            // Проверка на дубликат по дате или по тикеру и изменению цены
-            val isDuplicate = existingSignals.date == newSignal.date ||
-                    (existingSignals.tickerName == newSignal.tickerName &&
-                            existingSignals.priceChange == newSignal.priceChange)
+            // Проверка на дубликат по тикеру
+            val isDuplicate = existingSignals.tickerName == newSignal.tickerName
 
             // Проверка на соответствие условиям по изменению цены
-           // val isPriceChangeValid = newSignal.priceChange.m1 > existingSignals.priceChange.m1 ||
-           //         newSignal.priceChange.m5 > existingSignals.priceChange.m5 ||
-           //         newSignal.priceChange.m10 > existingSignals.priceChange.m10
+            val isPriceChangeValid = newSignal.priceChange.m1 > existingSignals.priceChange.m1 ||
+                    newSignal.priceChange.m5 > existingSignals.priceChange.m5 ||
+                    newSignal.priceChange.m10 > existingSignals.priceChange.m10
 
             // Возвращаем true только если сигнал является дубликатом и изменение цены соответствует условиям
             return isDuplicate
-                    //&& (isPriceChangeValid
+                    && isPriceChangeValid
         }
 
     }
